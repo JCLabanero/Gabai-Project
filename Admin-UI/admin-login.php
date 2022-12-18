@@ -1,6 +1,7 @@
 <?php
 
-    require_once "../gabai-database.php";
+    require_once '../gabai-database.php';
+    require_once '../Admin-UI/admin-data.php';
     $gabai->admin_login();
 
 ?>
