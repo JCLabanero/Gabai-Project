@@ -1,6 +1,7 @@
 <?php
 
-Class Gabai {
+class Gabai
+{
     private $server = "mysql:host=localhost;dbname=gabai_database";
     private $user = "root";
     private $pass = "";
@@ -24,34 +25,30 @@ Class Gabai {
 
     public function show_404()
     {
-        if(isset($_POST['submit'])){
+        if (isset($_POST['submit'])) {
 
             $email = $_POST['email'];
             $password = md5($_POST['password']);
             $access = 'admin';
-            
-
-        $connection = $this->openConnection();
-        $stmt = $connection->prepare("SELECT * FROM user WHERE email = ? AND password = ? AND access = ?");
-        $stmt->execute([$email,$password,$access]);
-        $user = $stmt->fetch();
-        $total = $stmt->rowCount();
-
-        if($total > 0){
-            echo '<script type="text/javascript">';
-            echo ' alert("Log in Success")';  //not showing an alert box.
-            echo '</script>';
-            $this->set_userdata($user);
-            header('Location: ../Admin-UI/admin-homepage.php');
-
-        } else {
-            echo '<script type="text/javascript">';
-            echo ' alert("Log in Failed!")';  //not showing an alert box.
-            echo '</script>';
-        }
 
 
+            $connection = $this->openConnection();
+            $stmt = $connection->prepare("SELECT * FROM user WHERE email = ? AND password = ? AND access = ?");
+            $stmt->execute([$email, $password, $access]);
+            $user = $stmt->fetch();
+            $total = $stmt->rowCount();
 
+            if ($total > 0) {
+                echo '<script type="text/javascript">';
+                echo ' alert("Log in Success")';  //not showing an alert box.
+                echo '</script>';
+                $this->set_userdata($user);
+                header('Location: ../Admin-UI/admin-homepage.php');
+            } else {
+                echo '<script type="text/javascript">';
+                echo ' alert("Log in Failed!")';  //not showing an alert box.
+                echo '</script>';
+            }
         }
     }
 
@@ -62,8 +59,8 @@ Class Gabai {
         }
 
         $_SESSION['userdata'] = array(
-                "fullname" => $array['first_name']." ".$array['last_name'],
-                "access" => $array['access']
+            "fullname" => $array['first_name'] . " " . $array['last_name'],
+            "access" => $array['access']
         );
 
         return $_SESSION['userdata'];
@@ -114,20 +111,18 @@ Class Gabai {
             $access = "admin";
 
 
-        if($this->check_email_exist($email) == 0){
-            $connection = $this->openConnection();
-            $stmt = $connection->prepare("INSERT INTO user(`first_name`,`last_name`,`email`,`password`,`access`)
+            if ($this->check_email_exist($email) == 0) {
+                $connection = $this->openConnection();
+                $stmt = $connection->prepare("INSERT INTO user(`first_name`,`last_name`,`email`,`password`,`access`)
             VALUE (?,?,?,?,?)");
-            $stmt->execute([$fname,$lname,$email,$password,$access]);
-            header('Location: ../Admin-UI/admin-success-register.php');
-
-            }else {
+                $stmt->execute([$fname, $lname, $email, $password, $access]);
+                header('Location: ../Admin-UI/admin-success-register.php');
+            } else {
                 echo '<script type="text/javascript">';
                 echo ' alert("Email already taken.")';  //not showing an alert box.
                 echo '</script>';
             }
         }
-
     }
     public function user_login()
     {
@@ -136,26 +131,25 @@ Class Gabai {
             $email = $_POST['user-email'];
             $password = md5($_POST['user-password']);
             $access = 'user';
-            
 
-        $connection = $this->openConnection();
-        $stmt = $connection->prepare("SELECT * FROM user WHERE email = ? AND password = ? AND access = ?");
-        $stmt->execute([$email,$password,$access]);
-        $user = $stmt->fetch();
-        $total = $stmt->rowCount();
 
-        if($total > 0){
-            echo '<script type="text/javascript">';
-            echo ' alert("Log in Success")';  //not showing an alert box.
-            echo '</script>';
-            $this->set_userdata($user);
-            header('Location: ./User-UI/user-homepage.php');
+            $connection = $this->openConnection();
+            $stmt = $connection->prepare("SELECT * FROM user WHERE email = ? AND password = ? AND access = ?");
+            $stmt->execute([$email, $password, $access]);
+            $user = $stmt->fetch();
+            $total = $stmt->rowCount();
 
-        } else {
-            echo '<script type="text/javascript">';
-            echo ' alert("Log in Failed!")';  //not showing an alert box.
-            echo '</script>';
-        }
+            if ($total > 0) {
+                echo '<script type="text/javascript">';
+                echo ' alert("Log in Success")';  //not showing an alert box.
+                echo '</script>';
+                $this->set_userdata($user);
+                header('Location: ./User-UI/user-homepage.php');
+            } else {
+                echo '<script type="text/javascript">';
+                echo ' alert("Log in Failed!")';  //not showing an alert box.
+                echo '</script>';
+            }
         }
     }
     public function user_check_email_exist($email)
@@ -180,34 +174,30 @@ Class Gabai {
             $confirm = md5($_POST['confirm']);
             $access = "user";
 
-            if( empty($fname) && empty($lname) && empty($email) && empty($password)&& empty($confirm)){
-                    echo "<div class='alert alert-danger justify-content-center' style='text-align: center;' role='alert'>
-                    <strong> Cannot be Empty!</strong></div>";
-
-            }else   {
-            if($password !== $confirm ){
+            if (empty($fname) && empty($lname) && empty($email) && empty($password) && empty($confirm)) {
                 echo "<div class='alert alert-danger justify-content-center' style='text-align: center;' role='alert'>
+                    <strong> Cannot be Empty!</strong></div>";
+            } else {
+                if ($password !== $confirm) {
+                    echo "<div class='alert alert-danger justify-content-center' style='text-align: center;' role='alert'>
                     <strong> Password is not Matched</strong></div>";
 
-        if($this->user_check_email_exist($email) == 0){
-            $connection = $this->openConnection();
-            $stmt = $connection->prepare("INSERT INTO user(`first_name`,`last_name`,`email`,`password`,`access`)
+                    if ($this->user_check_email_exist($email) == 0) {
+                        $connection = $this->openConnection();
+                        $stmt = $connection->prepare("INSERT INTO user(`first_name`,`last_name`,`email`,`password`,`access`)
             VALUE (?,?,?,?,?)");
-                $stmt->execute([$fname, $lname, $email, $password, $access]);
-                echo '<script type="text/javascript">';
-                echo ' alert("Succesfully Register.")';  //not showing an alert box.
-                echo '</script>';
-
-            }else {
-                echo '<script type="text/javascript">';
-                echo ' alert("Cannot be Empty.")';  //not showing an alert box.
-                echo '</script>';
-                
+                        $stmt->execute([$fname, $lname, $email, $password, $access]);
+                        echo '<script type="text/javascript">';
+                        echo ' alert("Succesfully Register.")';  //not showing an alert box.
+                        echo '</script>';
+                    } else {
+                        echo '<script type="text/javascript">';
+                        echo ' alert("Cannot be Empty.")';  //not showing an alert box.
+                        echo '</script>';
+                    }
+                }
             }
         }
-
     }
-
-    
 }
 $gabai = new Gabai();
